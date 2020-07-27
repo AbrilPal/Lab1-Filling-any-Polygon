@@ -141,7 +141,7 @@ class Render(object):
             x1 = self.vertices[num][0]
             y1 = self.vertices[num][1]
             if ((y0 > y) != (y1 > y)) and (x < x0 + (x1 - x0) * (y - y0) / (y1 - y0)):
-                si = True
+                si = not si
             num = i
         return si
 
