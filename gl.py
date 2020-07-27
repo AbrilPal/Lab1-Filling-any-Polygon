@@ -4,7 +4,6 @@
 
 # libreria
 import struct
-from obj import Obj
 
 # para especificar cuanto tamaño quiero guardar en bytes de cada uno
 def char(c):
@@ -59,7 +58,7 @@ class Render(object):
         self.pixels = [[rosado for x in range(self.ancho)] for y in range(self.alto)]
 
     # crear un punto en cualquier lugar de la pantalla 
-    def glVertex(self, x, y):
+    def glvertice(self, x, y):
        # xw = int((x + 1) * (self.viewport_ancho/2) + self.viewport_x)
        # yw = int((y + 1) * (self.viewport_alto/2) + self.viewport_y)
         self.pixels[x][y] = self.punto_color
@@ -102,9 +101,9 @@ class Render(object):
 
             for x in range(x0, x1 + 1):
                 if inclinado:
-                    self.glVertex(y, x)
+                    self.glvertice(y, x)
                 else:
-                    self.glVertex(x, y)
+                    self.glvertice(x, y)
 
                 desplazamiento += m
                 if desplazamiento >= limit:
@@ -113,18 +112,38 @@ class Render(object):
         except ZeroDivisionError:
             pass
 
-    def Model(self, filename, translate, scale):
-        model = Obj(filename)
-        for face in model.faces:
-            vertCount = len(face)
-            for vert in range(vertCount):
-                v0 = model.vertices[ face[vert][0] - 1 ]
-                v1 = model.vertices[ face[(vert + 1) % vertCount][0] - 1]
-                x0 = int(v0[0] * scale[0]  + translate[0])
-                y0 = int(v0[1] * scale[1]  + translate[1])
-                x1 = int(v1[0] * scale[0]  + translate[0])
-                y1 = int(v1[1] * scale[1]  + translate[1])
-                self.glLine(x0, y0, x1, y1)
+    # dibujar los poligonos
+    def Poligonos(self, vertices):
+        self.vertices = vertices
+        for vertice in range(0, len(self.vertices)):
+            x0 = self.vertices[vertice][0]
+            y0 = self.vertices[vertice][1] 
+            if vertice + 1 < len(self.vertices):
+                x1 = self.vertices[vertice + 1][0]
+            else:
+                 self.vertices[0][0]
+            if vertice + 1 < len(self.vertices):
+                y1 = self.vertices[vertice + 1][1] 
+            else:
+                 self.vertices[0][1]
+            self.glLine(x0, y0, x1, y1)
+            for x in range(self.ancho):
+                for y in range(self.alto):
+                    if self.Regla(x, y): self.glvertice(x, y)
+
+    # regla impar-par
+    def Regla(self, x, y):
+        num = len(self.vertices) - 1
+        si = False
+        for i in range(len(self.vertices)):
+            x0 = self.vertices[i][0]
+            y0 = self.vertices[i][1]
+            x1 = self.vertices[num][0]
+            y1 = self.vertices[num][1]
+            if ((y0 > y) != (y1 > y)) and (x < x0 + (x1 - x0) * (y - y0) / (y1 - y0)):
+                si = not si
+            num = i
+        return si
 
     # escribe el archivo
     def glFinish(self, name):
