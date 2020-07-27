@@ -41,7 +41,7 @@ class Render(object):
         # alto de la imagen
         self.alto = alto
         # color predeterminado del punto en la pantalla
-        self.punto_color = negro
+        self.punto_color = rosado
         # color de fondo de la imagen
         self.glClear()
 
@@ -55,13 +55,13 @@ class Render(object):
     def glClear(self):
         # color de fondo
         #color_fondo = color_f
-        self.pixels = [[rosado for x in range(self.ancho)] for y in range(self.alto)]
+        self.pixels = [[negro for x in range(self.ancho)] for y in range(self.alto)]
 
     # crear un punto en cualquier lugar de la pantalla 
     def glvertice(self, x, y):
        # xw = int((x + 1) * (self.viewport_ancho/2) + self.viewport_x)
        # yw = int((y + 1) * (self.viewport_alto/2) + self.viewport_y)
-        self.pixels[x][y] = self.punto_color
+        self.pixels[y][x] = self.punto_color
 
     # permite cambiar el color del punto
     # def glColor(self, color_p):
@@ -141,7 +141,7 @@ class Render(object):
             x1 = self.vertices[num][0]
             y1 = self.vertices[num][1]
             if ((y0 > y) != (y1 > y)) and (x < x0 + (x1 - x0) * (y - y0) / (y1 - y0)):
-                si = not si
+                si = True
             num = i
         return si
 
