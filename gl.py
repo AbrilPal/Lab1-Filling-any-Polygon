@@ -31,6 +31,7 @@ def color(r, g, b):
 rosado = color(250,229,251)
 negro = color(0,0,0)
 blanco = color(255,255,255)
+gris = color(248,249,249)
 
 # clase principal
 class Render(object):
@@ -55,7 +56,7 @@ class Render(object):
     def glClear(self):
         # color de fondo
         #color_fondo = color_f
-        self.pixels = [[negro for x in range(self.ancho)] for y in range(self.alto)]
+        self.pixels = [[gris for x in range(self.ancho)] for y in range(self.alto)]
 
     # crear un punto en cualquier lugar de la pantalla 
     def glvertice(self, x, y):
@@ -115,35 +116,41 @@ class Render(object):
     # dibujar los poligonos
     def Poligonos(self, vertices):
         self.vertices = vertices
-        for vertice in range(0, len(self.vertices)):
+        self.size = len(self.vertices)
+        for vertice in range(self.size):
             x0 = self.vertices[vertice][0]
-            y0 = self.vertices[vertice][1] 
-            if vertice + 1 < len(self.vertices):
+            y0 = self.vertices[vertice][1]
+            # colocar las x de los poligonos
+            if vertice + 1 < self.size:
                 x1 = self.vertices[vertice + 1][0]
             else:
-                 self.vertices[0][0]
-            if vertice + 1 < len(self.vertices):
+                self.vertices[0][0]
+            # colocar las y de los poligonos
+            if vertice + 1 < self.size:
                 y1 = self.vertices[vertice + 1][1] 
             else:
-                 self.vertices[0][1]
+                self.vertices[0][1]
+            # hacer los poligonos, conectando los vertices
             self.glLine(x0, y0, x1, y1)
+            # alto y ancho del framebuffer
             for x in range(self.ancho):
                 for y in range(self.alto):
+                    # regla de par-impar
                     if self.Regla(x, y): self.glvertice(x, y)
 
     # regla impar-par
     def Regla(self, x, y):
-        num = len(self.vertices) - 1
-        si = False
-        for i in range(len(self.vertices)):
-            x0 = self.vertices[i][0]
-            y0 = self.vertices[i][1]
-            x1 = self.vertices[num][0]
-            y1 = self.vertices[num][1]
-            if ((y0 > y) != (y1 > y)) and (x < x0 + (x1 - x0) * (y - y0) / (y1 - y0)):
-                si = not si
-            num = i
-        return si
+        num = self.size
+        i = 0
+        j = num - 1
+        c = False
+        for i in range(num):
+            if ((self.vertices[i][1] > y) != (self.vertices[j][1] > y)) and \
+                    (x < self.vertices[i][0] + (self.vertices[j][0] - self.vertices[i][0]) * (y - self.vertices[i][1]) /
+                                    (self.vertices[j][1] - self.vertices[i][1])):
+                c = not c
+            j = i
+        return c
 
     # escribe el archivo
     def glFinish(self, name):
