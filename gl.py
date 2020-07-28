@@ -65,8 +65,8 @@ class Render(object):
         self.pixels[y][x] = self.punto_color
 
     # permite cambiar el color del punto
-    # def glColor(self, color_p):
-       # self.punto_color = color_p
+    def glColor(self, color_p):
+        self.punto_color = color_p
 
     # hacer lineas
     def  glLine( self , x0 , y0 , x1 , y1 ):
