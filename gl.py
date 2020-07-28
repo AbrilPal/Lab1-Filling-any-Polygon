@@ -136,7 +136,9 @@ class Render(object):
             for x in range(self.ancho):
                 for y in range(self.alto):
                     # regla de par-impar
-                    if self.Regla(x, y): self.glvertice(x, y)
+                    # si retorna que es true pinta el punto
+                    if self.Regla(x, y) == True:
+                        self.glvertice(x, y)
 
     # regla impar-par
     def Regla(self, x, y):
